@@ -26,7 +26,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements RageComicListFragment.OnRageComicSelected {
+public class MainActivity extends AppCompatActivity implements
+        RageComicListFragment.OnRageComicSelected {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -42,6 +43,16 @@ public class MainActivity extends AppCompatActivity implements RageComicListFrag
 
   @Override
   public void onRageComicSelected(int imageId, String name, String description, String url) {
-    Toast.makeText(this, "Hey, you selected" + name + "!", Toast.LENGTH_LONG);
+    /*
+    * Replace the fragment for displaying the comics with the one that gives the description
+    * whenever any of the fragments are clicked!!!
+    * */
+    final RageComicDetailsFragment detailsFragment =
+            RageComicDetailsFragment.newInstance(imageId, name, description, url);
+    getSupportFragmentManager()
+            .beginTransaction()
+            .replace(R.id.root_layout, detailsFragment, "Rage Comics Details")
+            .addToBackStack(null)
+            .commit();
   }
 }
