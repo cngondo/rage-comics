@@ -44,6 +44,8 @@ public class RageComicListFragment extends Fragment {
   private String[] mDescriptions;
   private String[] mUrls;
 
+  private OnRageComicSelected mListener;
+
   public static RageComicListFragment newInstance() {
     return new RageComicListFragment();
   }
@@ -55,8 +57,19 @@ public class RageComicListFragment extends Fragment {
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
-
-    //get the face names and descriptions
+    /*
+    * The folowing initializes the listener reference. You wait until onAttach() to ensure that the
+    * fragment actually attached itself. Then you verify that the activity implements the
+    * OnRageComicSelected interface via instanceof.
+    * */
+    if(context instanceof OnRageComicSelected){
+      mListener = (OnRageComicSelected) context;
+    }else {
+      throw new ClassCastException(context.toString() + "You must inmplement OnGareComicSelected");
+    }
+    /*
+    * After instantiation, load now all the resources from the String Arrays and image arrays
+    * */
     final Resources resources  = context.getResources();
     mNames = resources.getStringArray(R.array.names);
     mDescriptions = resources.getStringArray(R.array.descriptions);
@@ -104,6 +117,14 @@ public class RageComicListFragment extends Fragment {
       final String description = mDescriptions[position];
       final String url = mUrls[position];
       viewHolder.setData(imageResId, name);
+
+      //When the view items are clicked
+      viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          mListener.onRageComicSelected(imageResId, name, description, url);
+        }
+      });
     }
 
     @Override
@@ -129,5 +150,9 @@ public class RageComicListFragment extends Fragment {
       mImageView.setImageResource(imageResId);
       mNameTextView.setText(name);
     }
+  }
+
+  public interface OnRageComicSelected{
+    void onRageComicSelected(int imageId, String name, String description, String url);
   }
 }
